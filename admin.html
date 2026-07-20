@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Solar Scenepacks</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+    .admin-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      padding: 26px; margin-bottom: 24px;
+    }
+    .admin-card h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 16px; }
+    .form-row { margin-bottom: 14px; }
+    .form-row label { display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px; }
+    .form-row input, .form-row textarea, .form-row select {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid var(--border); border-radius: 10px;
+      font: inherit; font-size: 0.95rem; color: var(--text);
+      background: var(--bg); outline: none; transition: 0.18s;
+    }
+    .form-row input:focus, .form-row textarea:focus, .form-row select:focus {
+      border-color: var(--accent); background: var(--bg-soft);
+    }
+    .form-row textarea { resize: vertical; min-height: 80px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    @media (max-width: 560px) { .form-grid { grid-template-columns: 1fr; } }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 22px; border: none; border-radius: 10px;
+      font: inherit; font-weight: 700; font-size: 0.95rem; cursor: pointer;
+      background: linear-gradient(90deg, var(--accent), #4da9ff); color: #fff;
+      box-shadow: 0 6px 18px rgba(0,128,254,0.3); transition: 0.18s;
+    }
+    .btn:hover { filter: brightness(1.07); }
+    .btn:disabled { opacity: 0.6; cursor: wait; }
+    .btn-secondary { background: var(--bg-soft); color: var(--text); box-shadow: none; }
+    .btn-danger { background: #ff5d6c; box-shadow: 0 6px 18px rgba(255,93,108,0.3); }
+    .btn-sm { padding: 7px 14px; font-size: 0.85rem; }
+    .login-box { max-width: 400px; margin: 80px auto; }
+    .login-box h1 { text-align: center; font-size: 1.5rem; margin-bottom: 20px; }
+    .status-msg { margin-top: 12px; font-size: 0.9rem; font-weight: 600; }
+    .status-msg.ok { color: #1a9c5b; }
+    .status-msg.err { color: #e0384a; }
+    .pack-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .pack-row:last-child { border-bottom: none; }
+    .pack-row img { width: 74px; height: 46px; object-fit: cover; border-radius: 8px; background: var(--bg-soft); }
+    .pack-row-info { flex: 1; min-width: 0; }
+    .pack-row-title { font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pack-row-sub { color: var(--text-soft); font-size: 0.8rem; }
+    .pack-row-actions { display: flex; gap: 8px; }
+    .img-preview { margin-top: 8px; max-height: 140px; border-radius: 10px; display: none; }
+    .top-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 10px; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">☀️</span>
+        <span class="logo-text">Solar <span>Admin</span></span>
+      </a>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">← Back to site</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- LOGIN -->
+  <div class="admin-wrap" id="loginView">
+    <div class="admin-card login-box">
+      <h1>🔒 Admin Login</h1>
+      <div class="form-row">
+        <label for="passwordInput">Password</label>
+        <input type="password" id="passwordInput" placeholder="Enter admin password" autocomplete="current-password">
+      </div>
+      <button class="btn" id="loginBtn" style="width:100%">Log in</button>
+      <div class="status-msg" id="loginStatus"></div>
+    </div>
+  </div>
+
+  <!-- PANEL -->
+  <div class="admin-wrap" id="panelView" hidden>
+    <div class="top-actions">
+      <h1 style="font-size:1.5rem;font-weight:800">Admin Panel</h1>
+      <button class="btn btn-secondary btn-sm" id="logoutBtn">Log out</button>
+    </div>
+
+    <div class="admin-card">
+      <h2 id="formHeading">➕ Post a new scenepack</h2>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fTitle">Title *</label>
+          <input id="fTitle" placeholder="e.g. Breaking Bad S1 Scenepack">
+        </div>
+        <div class="form-row">
+          <label for="fCategory">Category *</label>
+          <input id="fCategory" list="catList" placeholder="Movies, TV Shows, Anime...">
+          <datalist id="catList">
+            <option value="Movies"><option value="TV Shows"><option value="Anime"><option value="Celebrities"><option value="Other">
+          </datalist>
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="fImage">Photo URL * <span style="font-weight:400;color:var(--text-soft)">(picture of the show/movie)</span></label>
+        <input id="fImage" placeholder="https://... (paste image link)">
+        <img class="img-preview" id="imgPreview" alt="">
+      </div>
+      <div class="form-row">
+        <label for="fDownload">Download link * <span style="font-weight:400;color:var(--text-soft)">(buzzheavier link)</span></label>
+        <input id="fDownload" placeholder="https://buzzheavier.com/...">
+      </div>
+      <div class="form-row">
+        <label for="fDesc">Description (optional)</label>
+        <textarea id="fDesc" placeholder="Short description... e.g. 1080p, no watermark, 250 clips"></textarea>
+      </div>
+      <button class="btn" id="saveBtn">Publish pack</button>
+      <button class="btn btn-secondary" id="cancelEditBtn" hidden>Cancel edit</button>
+      <div class="status-msg" id="saveStatus"></div>
+    </div>
+
+    <div class="admin-card">
+      <h2>⚙️ Site settings</h2>
+      <div class="form-row">
+        <label for="fDiscord">Discord invite link</label>
+        <input id="fDiscord" placeholder="https://discord.gg/...">
+      </div>
+      <button class="btn" id="saveConfigBtn">Save settings</button>
+      <div class="status-msg" id="configStatus"></div>
+    </div>
+
+    <div class="admin-card">
+      <h2>📦 Published packs (<span id="adminCount">0</span>)</h2>
+      <div id="adminList"></div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
