@@ -48,7 +48,7 @@ img { display: block; max-width: 100%; }
 }
 .logo { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.15rem; color: #fff; }
 .logo-text span { color: #bfe0ff; }
-.logo-icon { font-size: 1.3rem; }
+.logo-icon { color: #ffd166; }
 .nav { display: flex; align-items: center; gap: 6px; }
 .nav-link {
   padding: 8px 14px; border-radius: 10px;
@@ -68,10 +68,6 @@ img { display: block; max-width: 100%; }
   box-shadow: 0 4px 14px rgba(0,0,0,0.15);
 }
 .discord-btn:hover { background: #eaf4ff; }
-.request-btn {
-  color: #fff !important;
-}
-.request-btn:hover { background: rgba(255,255,255,0.18); }
 .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: #fff; cursor: pointer; }
 
 /* ─── Hero — azure gradient ─── */
@@ -273,7 +269,8 @@ img { display: block; max-width: 100%; }
   text-align: center; transition: 0.2s;
 }
 .info-card:hover { border-color: var(--azure); transform: translateY(-3px); }
-.info-icon { font-size: 2.2rem; margin-bottom: 12px; }
+.info-icon { color: #7db8ff; margin-bottom: 12px; }
+.info-icon svg { display: inline-block; }
 .info-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
 .info-card p { color: var(--text-soft); font-size: 0.9rem; }
 
