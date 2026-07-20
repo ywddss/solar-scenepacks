@@ -69,12 +69,21 @@
     downloads[pack.id] = (downloads[pack.id] || 0) + 1;
     renderGrid();
     updateModalCount(pack);
+    updateStats();
     fetch(COUNTER_API + "/" + counterKey(pack) + "/up").catch(() => {});
   }
 
   function updateModalCount(pack) {
     const el = document.getElementById("modalDownloads");
     if (el) el.textContent = fmtCount(downloads[pack.id] || 0) + " downloads";
+  }
+
+  function updateStats() {
+    const totalDl = Object.values(downloads).reduce((a, b) => a + b, 0);
+    const el = id => document.getElementById(id);
+    if (el("statPacks")) el("statPacks").textContent = fmtCount(packs.length);
+    if (el("statDownloads")) el("statDownloads").textContent = fmtCount(totalDl);
+    if (el("statCategories")) el("statCategories").textContent = String(Math.max(categories().length - 1, 0));
   }
 
   function categories() {
@@ -251,7 +260,7 @@
       document.getElementById("discordLink"),
       document.getElementById("discordLinkFooter"),
       document.getElementById("requestLink"),
-      document.getElementById("requestLinkFooter")
+      document.getElementById("discordCta")
     ];
     links.forEach(a => {
       if (!a) return;
@@ -260,6 +269,15 @@
   }
 
   applyConfig();
+
+  // Back to top button
+  const backToTop = document.getElementById("backToTop");
+  if (backToTop) {
+    window.addEventListener("scroll", () => {
+      backToTop.hidden = window.scrollY < 400;
+    }, { passive: true });
+    backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  }
 
   // Load data
   Promise.all([
@@ -271,6 +289,7 @@
     applyConfig();
     renderFilters();
     renderGrid();
+    updateStats();
     // Deep link: open ?pack=<id> directly (shared links)
     const packParam = new URLSearchParams(location.search).get("pack");
     if (packParam) {
@@ -278,6 +297,6 @@
       if (shared) openModal(shared, false);
     }
     // Fetch download counts, then re-render so numbers appear
-    loadDownloadCounts().then(renderGrid);
+    loadDownloadCounts().then(() => { renderGrid(); updateStats(); });
   });
 })();

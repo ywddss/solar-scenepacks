@@ -122,6 +122,24 @@ img { display: block; max-width: 100%; }
 .filter-btn:hover { background: rgba(255,255,255,0.25); border-color: #fff; }
 .filter-btn.active { background: #fff; border-color: #fff; color: var(--azure-dark); }
 
+/* ─── Stats strip ─── */
+.stats-strip {
+  background: var(--bg-soft);
+  border-bottom: 1px solid var(--border);
+}
+.stats-inner {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  padding-top: 22px; padding-bottom: 22px; gap: 12px;
+  text-align: center;
+}
+.stat-num {
+  display: block; font-size: 1.5rem; font-weight: 800; color: #7db8ff;
+}
+.stat-label {
+  display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-soft);
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+
 /* ─── Grid ─── */
 .grid-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -239,12 +257,80 @@ img { display: block; max-width: 100%; }
 .btn-share:hover { border-color: var(--azure); color: #a8d0ff; }
 .btn-share.copied { background: #10331f; border-color: #1f7a44; color: #5fe08d; }
 
+/* ─── Info / How it works ─── */
+.section-title {
+  text-align: center; font-size: 1.6rem; font-weight: 800;
+  margin-bottom: 28px;
+}
+.info-section { padding: 56px 0; border-top: 1px solid var(--border); }
+.info-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+}
+.info-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 26px 22px;
+  text-align: center; transition: 0.2s;
+}
+.info-card:hover { border-color: var(--azure); transform: translateY(-3px); }
+.info-icon { font-size: 2.2rem; margin-bottom: 12px; }
+.info-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+.info-card p { color: var(--text-soft); font-size: 0.9rem; }
+
+/* ─── FAQ ─── */
+.faq-section { padding: 24px 0 56px; }
+.faq-list { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+.faq-item {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden;
+}
+.faq-item summary {
+  padding: 16px 20px; cursor: pointer; font-weight: 700; font-size: 0.98rem;
+  list-style: none; position: relative; user-select: none;
+  transition: 0.15s;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: "+"; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+  color: #7db8ff; font-size: 1.2rem; font-weight: 800;
+}
+.faq-item[open] summary::after { content: "−"; }
+.faq-item summary:hover { color: #7db8ff; }
+.faq-item p { padding: 0 20px 16px; color: var(--text-soft); font-size: 0.92rem; }
+
+/* ─── Discord CTA ─── */
+.cta-section {
+  background: linear-gradient(160deg, var(--azure-dark) 0%, var(--azure) 60%, var(--azure-light) 100%);
+  padding: 56px 0; text-align: center; color: #fff;
+}
+.cta-inner h2 { font-size: 1.7rem; font-weight: 800; }
+.cta-inner p { color: rgba(255,255,255,0.85); margin: 8px auto 24px; max-width: 440px; }
+.btn-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #fff; color: var(--azure-dark); font-weight: 800; font-size: 1rem;
+  padding: 14px 28px; border-radius: 999px; transition: 0.2s;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+}
+.btn-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.3); }
+
+/* ─── Back to top ─── */
+.back-to-top {
+  position: fixed; bottom: 24px; right: 24px; z-index: 60;
+  width: 46px; height: 46px; border-radius: 50%;
+  border: none; cursor: pointer;
+  background: var(--azure); color: #fff; font-size: 1.3rem; font-weight: 800;
+  box-shadow: 0 6px 18px rgba(0,128,254,0.45);
+  transition: 0.2s;
+}
+.back-to-top:hover { background: var(--azure-light); transform: translateY(-3px); }
+.back-to-top[hidden] { display: none; }
+
 /* ─── Footer — deep azure ─── */
 .site-footer {
   background: linear-gradient(180deg, var(--azure-deep), #083a7c);
   color: rgba(255,255,255,0.9);
   border-top: none;
-  padding: 36px 0 0; margin-top: 40px;
+  padding: 36px 0 0; margin-top: 0;
 }
 .footer-inner {
   display: flex; justify-content: space-between; gap: 30px; flex-wrap: wrap;
@@ -292,5 +378,6 @@ img { display: block; max-width: 100%; }
   .menu-toggle { display: block; }
   .hero { padding: 48px 0 40px; }
   .packs-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  .stats-inner { grid-template-columns: repeat(2, 1fr); }
   .footer-inner { flex-direction: column; }
 }
