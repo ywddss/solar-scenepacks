@@ -148,7 +148,7 @@
     });
   }
 
-  function openModal(pack) {
+  function openModal(pack, updateUrl = true) {
     currentPack = pack;
     modalImg.src = pack.image || "";
     modalImg.alt = pack.title;
@@ -158,13 +158,26 @@
     modalDesc.textContent = pack.description || "";
     modalDownload.href = pack.download || "#";
     updateModalCount(pack);
+    resetShareBtn();
     overlay.hidden = false;
     document.body.style.overflow = "hidden";
+    // Shareable link: ?pack=<id>
+    if (updateUrl && pack.id) {
+      const url = new URL(location.href);
+      url.searchParams.set("pack", pack.id);
+      history.replaceState(null, "", url);
+    }
   }
 
   function closeModal() {
     overlay.hidden = true;
     document.body.style.overflow = "";
+    // Remove ?pack= from the URL
+    const url = new URL(location.href);
+    if (url.searchParams.has("pack")) {
+      url.searchParams.delete("pack");
+      history.replaceState(null, "", url);
+    }
   }
 
   document.getElementById("modalClose").addEventListener("click", closeModal);
@@ -174,6 +187,42 @@
   modalDownload.addEventListener("click", () => {
     if (currentPack) trackDownload(currentPack);
   });
+
+  // Share button — copies a direct link to this pack
+  const shareBtn = document.getElementById("modalShare");
+  const shareText = document.getElementById("modalShareText");
+  function resetShareBtn() {
+    if (shareText) shareText.textContent = "Share";
+    if (shareBtn) shareBtn.classList.remove("copied");
+  }
+  if (shareBtn) {
+    shareBtn.addEventListener("click", () => {
+      if (!currentPack) return;
+      const url = new URL(location.origin + location.pathname);
+      url.searchParams.set("pack", currentPack.id);
+      const link = url.toString();
+      const done = () => {
+        shareText.textContent = "Link copied!";
+        shareBtn.classList.add("copied");
+        setTimeout(resetShareBtn, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(link).then(done).catch(() => fallbackCopy(link, done));
+      } else {
+        fallbackCopy(link, done);
+      }
+    });
+  }
+  function fallbackCopy(text, done) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); done(); } catch (e) {}
+    document.body.removeChild(ta);
+  }
 
   // Sort buttons (Newest / Most Popular)
   document.querySelectorAll(".sort-btn").forEach(btn => {
@@ -198,13 +247,20 @@
   }
 
   function applyConfig() {
-    const links = [document.getElementById("discordLink"), document.getElementById("discordLinkFooter")];
+    const links = [
+      document.getElementById("discordLink"),
+      document.getElementById("discordLinkFooter"),
+      document.getElementById("requestLink"),
+      document.getElementById("requestLinkFooter"),
+      document.getElementById("emptyRequestLink")
+    ];
     links.forEach(a => {
       if (!a) return;
-      if (config.discord) a.href = config.discord;
-      else a.style.display = "none";
+      a.href = config.discord || "#";
     });
   }
+
+  applyConfig();
 
   // Load data
   Promise.all([
@@ -216,6 +272,12 @@
     applyConfig();
     renderFilters();
     renderGrid();
+    // Deep link: open ?pack=<id> directly (shared links)
+    const packParam = new URLSearchParams(location.search).get("pack");
+    if (packParam) {
+      const shared = packs.find(x => String(x.id) === packParam);
+      if (shared) openModal(shared, false);
+    }
     // Fetch download counts, then re-render so numbers appear
     loadDownloadCounts().then(renderGrid);
   });

@@ -68,6 +68,11 @@ img { display: block; max-width: 100%; }
   box-shadow: 0 4px 14px rgba(0,0,0,0.15);
 }
 .discord-btn:hover { background: #eaf4ff; }
+.request-btn {
+  border: 1.5px solid rgba(255,255,255,0.55);
+  color: #fff !important;
+}
+.request-btn:hover { background: rgba(255,255,255,0.18); border-color: #fff; }
 .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: #fff; cursor: pointer; }
 
 /* ─── Hero — azure gradient ─── */
@@ -186,6 +191,14 @@ img { display: block; max-width: 100%; }
 
 .empty-state { text-align: center; padding: 100px 0; color: var(--text-soft); font-size: 1.35rem; font-weight: 600; }
 .empty-icon { font-size: 4rem; margin-bottom: 16px; }
+.btn-request {
+  display: inline-block; margin-top: 20px; padding: 12px 24px;
+  background: linear-gradient(90deg, var(--azure), var(--azure-light));
+  color: #fff; font-size: 1rem; font-weight: 700;
+  border-radius: 999px; transition: 0.2s;
+  box-shadow: 0 6px 18px rgba(0,128,254,0.4);
+}
+.btn-request:hover { filter: brightness(1.07); transform: translateY(-1px); }
 
 /* ─── Modal ─── */
 .modal-overlay[hidden] { display: none; }
@@ -224,6 +237,16 @@ img { display: block; max-width: 100%; }
   box-shadow: 0 6px 18px rgba(0,128,254,0.4);
 }
 .btn-download:hover { filter: brightness(1.07); transform: translateY(-1px); }
+.btn-share {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 11px; margin-top: 10px;
+  background: var(--accent-soft); color: #7db8ff;
+  border: 1px solid var(--border); border-radius: 12px;
+  font: inherit; font-size: 0.92rem; font-weight: 700; cursor: pointer;
+  transition: 0.2s;
+}
+.btn-share:hover { border-color: var(--azure); color: #a8d0ff; }
+.btn-share.copied { background: #10331f; border-color: #1f7a44; color: #5fe08d; }
 
 /* ─── Footer — deep azure ─── */
 .site-footer {
