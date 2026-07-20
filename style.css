@@ -72,10 +72,9 @@ img { display: block; max-width: 100%; }
 .nav-link.active { color: #fff; }
 .request-btn {
   background: #000;
-  border: 1px solid var(--border);
   color: #fff !important;
 }
-.request-btn:hover { background: #0e1118; border-color: var(--azure-dark); }
+.request-btn:hover { background: #0e1118; }
 .discord-btn {
   display: inline-flex; align-items: center; gap: 7px;
   background: var(--azure); color: #fff !important;
