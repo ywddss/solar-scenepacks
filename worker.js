@@ -133,6 +133,13 @@ export default {
       fresh.headers.set("Cache-Control", "no-store");
       return fresh;
     }
+    // Admin panel: never index, never cache
+    if (url.pathname.startsWith("/85h6juzkf")) {
+      const fresh = new Response(res.body, res);
+      fresh.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+      fresh.headers.set("Cache-Control", "no-store");
+      return fresh;
+    }
     return res;
   }
 };
