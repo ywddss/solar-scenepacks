@@ -395,6 +395,13 @@ img { display: block; max-width: 100%; }
 .faq-item[open] summary::after { content: "−"; }
 .faq-item summary:hover { color: #7db8ff; }
 .faq-item p { padding: 0 22px 17px; color: var(--text-soft); font-size: 0.92rem; }
+.faq-item[open] p { animation: faqOpen 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+@keyframes faqOpen {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: none; }
+}
+.faq-item summary::after { transition: transform 0.25s ease; }
+.faq-item[open] summary::after { transform: translateY(-50%) rotate(180deg); }
 
 /* ─── Discord CTA ─── */
 .cta-section {
@@ -488,6 +495,8 @@ img { display: block; max-width: 100%; }
 /* Scroll-reveal for lower sections */
 .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.3, 1); }
 .reveal.visible { opacity: 1; transform: none; }
+/* Fade back out when scrolled away (two-way reveal) */
+.reveal.fade-out { opacity: 0; transform: translateY(30px); }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-badge, .hero h1, .hero-sub, .search-wrap, .filters, .site-header, .stats-strip .stat { animation: none; }

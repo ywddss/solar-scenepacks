@@ -282,7 +282,7 @@
     backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   }
 
-  // Scroll-reveal: lower sections fade up as they enter the viewport
+  // Scroll-reveal: sections fade up entering the viewport, fade out leaving it
   const revealEls = document.querySelectorAll(
     ".grid-header, .info-section .section-title, .info-section .section-sub, .info-card, .faq-section .section-title, .faq-section .section-sub, .faq-item, .cta-inner"
   );
@@ -293,10 +293,15 @@
         if (entry.isIntersecting) {
           entry.target.style.transitionDelay = Math.min((idx % 6) * 80, 400) + "ms";
           entry.target.classList.add("visible");
-          io.unobserve(entry.target);
+          entry.target.classList.remove("fade-out");
+        } else if (entry.target.classList.contains("visible")) {
+          // Element left the viewport — fade it out so it animates again next time
+          entry.target.style.transitionDelay = "0ms";
+          entry.target.classList.add("fade-out");
+          entry.target.classList.remove("visible");
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.12, rootMargin: "0px 0px -4% 0px" });
     revealEls.forEach(el => io.observe(el));
   } else {
     revealEls.forEach(el => el.classList.add("visible"));
