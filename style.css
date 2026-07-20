@@ -191,14 +191,6 @@ img { display: block; max-width: 100%; }
 
 .empty-state { text-align: center; padding: 100px 0; color: var(--text-soft); font-size: 1.35rem; font-weight: 600; }
 .empty-icon { font-size: 4rem; margin-bottom: 16px; }
-.btn-request {
-  display: inline-block; margin-top: 20px; padding: 12px 24px;
-  background: linear-gradient(90deg, var(--azure), var(--azure-light));
-  color: #fff; font-size: 1rem; font-weight: 700;
-  border-radius: 999px; transition: 0.2s;
-  box-shadow: 0 6px 18px rgba(0,128,254,0.4);
-}
-.btn-request:hover { filter: brightness(1.07); transform: translateY(-1px); }
 
 /* ─── Modal ─── */
 .modal-overlay[hidden] { display: none; }

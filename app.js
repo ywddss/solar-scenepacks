@@ -251,8 +251,7 @@
       document.getElementById("discordLink"),
       document.getElementById("discordLinkFooter"),
       document.getElementById("requestLink"),
-      document.getElementById("requestLinkFooter"),
-      document.getElementById("emptyRequestLink")
+      document.getElementById("requestLinkFooter")
     ];
     links.forEach(a => {
       if (!a) return;
