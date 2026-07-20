@@ -282,6 +282,26 @@
     backToTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
   }
 
+  // Scroll-reveal: lower sections fade up as they enter the viewport
+  const revealEls = document.querySelectorAll(
+    ".grid-header, .info-section .section-title, .info-section .section-sub, .info-card, .faq-section .section-title, .faq-section .section-sub, .faq-item, .cta-inner"
+  );
+  revealEls.forEach(el => el.classList.add("reveal"));
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((entry, idx) => {
+        if (entry.isIntersecting) {
+          entry.target.style.transitionDelay = Math.min((idx % 6) * 80, 400) + "ms";
+          entry.target.classList.add("visible");
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add("visible"));
+  }
+
   // Load data
   Promise.all([
     fetch("packs.json?v=" + Date.now()).then(r => r.json()).catch(() => []),
