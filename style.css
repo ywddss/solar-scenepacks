@@ -69,10 +69,9 @@ img { display: block; max-width: 100%; }
 }
 .discord-btn:hover { background: #eaf4ff; }
 .request-btn {
-  border: 1.5px solid rgba(255,255,255,0.55);
   color: #fff !important;
 }
-.request-btn:hover { background: rgba(255,255,255,0.18); border-color: #fff; }
+.request-btn:hover { background: rgba(255,255,255,0.18); }
 .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: #fff; cursor: pointer; }
 
 /* ─── Hero — azure gradient ─── */
