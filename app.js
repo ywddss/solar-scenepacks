@@ -135,13 +135,16 @@
         ? (activeCategory === "All" ? "Most Popular Scenepacks" : "Popular " + activeCategory + " Scenepacks")
         : (activeCategory === "All" ? "Latest Scenepacks" : activeCategory + " Scenepacks");
 
-    list.forEach(pack => {
+    list.forEach((pack, i) => {
       const card = document.createElement("div");
       card.className = "pack-card";
+      card.style.animationDelay = Math.min(i * 40, 400) + "ms";
       const dl = downloads[pack.id] || 0;
       card.innerHTML = `
+        <div class="thumb-wrap">
         <img class="pack-thumb" src="${escapeHtml(pack.image || "")}" alt="${escapeHtml(pack.title)}" loading="lazy"
-             onerror="this.src='data:image/svg+xml,${encodeURIComponent('<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 160 100\"><rect width=\"160\" height=\"100\" fill=\"%23e3f0fc\"/><text x=\"80\" y=\"55\" font-size=\"30\" text-anchor=\"middle\">🎬</text></svg>')}'">
+             onerror="this.src='data:image/svg+xml,${encodeURIComponent('<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 160 100\"><rect width=\"160\" height=\"100\" fill=\"%230b0d12\"/><text x=\"80\" y=\"55\" font-size=\"30\" text-anchor=\"middle\">🎬</text></svg>')}'">
+        </div>
         <div class="pack-info">
           <div class="pack-title">${escapeHtml(pack.title)}</div>
           <div class="pack-meta">
