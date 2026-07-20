@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 
-Sitemap: https://solar-scenepacks.pfiat90.workers.dev/sitemap.xml
+Sitemap: https://solarscenepacks.xyz/sitemap.xml
