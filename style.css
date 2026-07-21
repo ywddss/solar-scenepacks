@@ -558,7 +558,7 @@ img { display: block; max-width: 100%; }
 }
 .show-poster-col { flex-shrink: 0; }
 .show-poster {
-  width: 240px; aspect-ratio: 2 / 3; object-fit: cover;
+  width: 260px; height: auto;
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(0,128,254,0.12);

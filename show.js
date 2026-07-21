@@ -119,7 +119,6 @@
       tr.innerHTML = `
         <td>
           <div class="scp-cell-title">
-            <img src="${esc(p.image || "")}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
             <div>
               <div class="scp-name">${esc(p.title)}</div>
               <div class="scp-sub">${esc(p.date || "")}</div>
