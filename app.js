@@ -269,6 +269,14 @@
       if (!a) return;
       a.href = config.discord || "#";
     });
+    // Announcement banner (set from the admin panel)
+    const bar = document.getElementById("announceBar");
+    const barText = document.getElementById("announceText");
+    if (bar && barText) {
+      const show = config.announcementOn && (config.announcement || "").trim();
+      bar.hidden = !show;
+      if (show) barText.textContent = config.announcement;
+    }
   }
 
   applyConfig();
@@ -312,7 +320,7 @@
     fetch("packs.json?v=" + Date.now()).then(r => r.json()).catch(() => []),
     fetch("config.json?v=" + Date.now()).then(r => r.json()).catch(() => ({}))
   ]).then(([p, c]) => {
-    packs = Array.isArray(p) ? p : [];
+    packs = (Array.isArray(p) ? p : []).filter(x => !x.hidden);
     config = Object.assign(config, c);
     applyConfig();
     renderFilters();

@@ -98,7 +98,8 @@ async function handleAdmin(request, env) {
         description: String(p.description || "").slice(0, 1000),
         image: String(p.image || "").slice(0, 1000),
         download: String(p.download || "").slice(0, 1000),
-        date: String(p.date || "").slice(0, 10)
+        date: String(p.date || "").slice(0, 10),
+        hidden: !!p.hidden
       }));
       await saveFile(env, ALLOWED_FILES.packs, clean, "Update packs via admin panel");
       return json({ ok: true });
@@ -109,7 +110,11 @@ async function handleAdmin(request, env) {
       if (!config || typeof config !== "object") {
         return json({ error: "config must be an object" }, 400);
       }
-      const clean = { discord: String(config.discord || "").slice(0, 500) };
+      const clean = {
+        discord: String(config.discord || "").slice(0, 500),
+        announcement: String(config.announcement || "").slice(0, 180),
+        announcementOn: !!config.announcementOn
+      };
       await saveFile(env, ALLOWED_FILES.config, clean, "Update site settings via admin panel");
       return json({ ok: true });
     }

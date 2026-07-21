@@ -9,13 +9,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
-    .admin-wrap { max-width: 860px; margin: 0 auto; padding: 40px 20px 80px; }
+    .admin-wrap { max-width: 1060px; margin: 0 auto; padding: 32px 20px 80px; }
     .admin-card {
       background: var(--card); border: 1px solid var(--border);
       border-radius: var(--radius); box-shadow: var(--shadow);
-      padding: 26px; margin-bottom: 24px;
+      padding: 26px; margin-bottom: 20px;
     }
-    .admin-card h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 16px; }
+    .admin-card h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
     .form-row { margin-bottom: 14px; }
     .form-row label { display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px; }
     .form-row input, .form-row textarea, .form-row select {
@@ -39,26 +39,113 @@
     }
     .btn:hover { filter: brightness(1.07); }
     .btn:disabled { opacity: 0.6; cursor: wait; }
-    .btn-secondary { background: var(--bg-soft); color: var(--text); box-shadow: none; }
+    .btn-secondary { background: var(--bg-soft); color: var(--text); box-shadow: none; border: 1px solid var(--border); }
     .btn-danger { background: #ff5d6c; box-shadow: 0 6px 18px rgba(255,93,108,0.3); }
-    .btn-sm { padding: 7px 14px; font-size: 0.85rem; }
+    .btn-sm { padding: 7px 13px; font-size: 0.83rem; }
     .login-box { max-width: 400px; margin: 80px auto; }
     .login-box h1 { text-align: center; font-size: 1.5rem; margin-bottom: 20px; }
     .status-msg { margin-top: 12px; font-size: 0.9rem; font-weight: 600; }
     .status-msg.ok { color: #1a9c5b; }
     .status-msg.err { color: #e0384a; }
+
+    /* ── Tabs ── */
+    .admin-tabs {
+      display: flex; gap: 6px; margin-bottom: 22px; flex-wrap: wrap;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 6px;
+    }
+    .tab-btn {
+      flex: 1; min-width: 110px; padding: 11px 16px; border: none; border-radius: 10px;
+      font: inherit; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+      background: transparent; color: var(--text-soft); transition: 0.18s;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+    }
+    .tab-btn:hover { color: var(--text); background: var(--bg-soft); }
+    .tab-btn.active {
+      background: linear-gradient(90deg, var(--accent), #4da9ff); color: #fff;
+      box-shadow: 0 4px 14px rgba(0,128,254,0.3);
+    }
+    .tab-view { display: none; }
+    .tab-view.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* ── Dashboard ── */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px 22px; position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: ""; position: absolute; inset: 0 auto 0 0; width: 4px;
+      background: linear-gradient(180deg, var(--accent), #4da9ff);
+    }
+    .stat-card .num { font-size: 1.7rem; font-weight: 800; }
+    .stat-card .lbl { color: var(--text-soft); font-size: 0.82rem; font-weight: 600; margin-top: 2px; }
+    .top-list { display: flex; flex-direction: column; }
+    .top-item {
+      display: flex; align-items: center; gap: 12px; padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .top-item:last-child { border-bottom: none; }
+    .top-rank {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--accent-soft); color: var(--accent); font-weight: 800; font-size: 0.85rem;
+    }
+    .top-item img { width: 58px; height: 36px; object-fit: cover; border-radius: 7px; background: var(--bg-soft); }
+    .top-item .t { flex: 1; min-width: 0; font-weight: 700; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .top-item .d { color: var(--text-soft); font-size: 0.83rem; font-weight: 600; flex-shrink: 0; }
+
+    /* ── Pack list ── */
+    .list-tools { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .list-tools input { flex: 1; min-width: 180px; }
+    .list-tools input, .list-tools select {
+      padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+      font: inherit; font-size: 0.9rem; color: var(--text); background: var(--bg); outline: none;
+    }
+    .list-tools input:focus, .list-tools select:focus { border-color: var(--accent); }
     .pack-row {
       display: flex; align-items: center; gap: 14px;
       padding: 12px 0; border-bottom: 1px solid var(--border);
     }
     .pack-row:last-child { border-bottom: none; }
-    .pack-row img { width: 74px; height: 46px; object-fit: cover; border-radius: 8px; background: var(--bg-soft); }
+    .pack-row.is-hidden { opacity: 0.45; }
+    .pack-row img { width: 74px; height: 46px; object-fit: cover; border-radius: 8px; background: var(--bg-soft); flex-shrink: 0; }
     .pack-row-info { flex: 1; min-width: 0; }
-    .pack-row-title { font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .pack-row-sub { color: var(--text-soft); font-size: 0.8rem; }
-    .pack-row-actions { display: flex; gap: 8px; }
+    .pack-row-title { font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 8px; }
+    .pack-row-sub { color: var(--text-soft); font-size: 0.8rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .badge {
+      display: inline-flex; padding: 2px 8px; border-radius: 6px;
+      font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .badge.hidden-badge { background: rgba(255,171,0,0.14); color: #ffab00; }
+    .pack-row-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    @media (max-width: 640px) {
+      .pack-row { flex-wrap: wrap; }
+      .pack-row-actions { width: 100%; }
+    }
+
     .img-preview { margin-top: 8px; max-height: 140px; border-radius: 10px; display: none; }
-    .top-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 10px; }
+    .top-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+
+    /* Toggle switch */
+    .switch-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .switch { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; inset: 0; border-radius: 26px; cursor: pointer;
+      background: var(--bg-soft); border: 1px solid var(--border); transition: 0.2s;
+    }
+    .slider::before {
+      content: ""; position: absolute; width: 18px; height: 18px; border-radius: 50%;
+      left: 3px; top: 3px; background: var(--text-soft); transition: 0.2s;
+    }
+    .switch input:checked + .slider { background: var(--accent); border-color: var(--accent); }
+    .switch input:checked + .slider::before { transform: translateX(20px); background: #fff; }
+    .switch-label { font-weight: 600; font-size: 0.9rem; }
+
+    .backup-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .muted { color: var(--text-soft); font-size: 0.84rem; margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -95,52 +182,120 @@
       <button class="btn btn-secondary btn-sm" id="logoutBtn">Log out</button>
     </div>
 
-    <div class="admin-card">
-      <h2 id="formHeading">➕ Post a new scenepack</h2>
-      <div class="form-grid">
-        <div class="form-row">
-          <label for="fTitle">Title *</label>
-          <input id="fTitle" placeholder="e.g. Breaking Bad S1 Scenepack">
-        </div>
-        <div class="form-row">
-          <label for="fCategory">Category *</label>
-          <input id="fCategory" list="catList" placeholder="Movies, TV Shows, Anime...">
-          <datalist id="catList">
-            <option value="Movies"><option value="TV Shows"><option value="Anime"><option value="Celebrities"><option value="Other">
-          </datalist>
-        </div>
-      </div>
-      <div class="form-row">
-        <label for="fImage">Photo URL * <span style="font-weight:400;color:var(--text-soft)">(picture of the show/movie)</span></label>
-        <input id="fImage" placeholder="https://... (paste image link)">
-        <img class="img-preview" id="imgPreview" alt="">
-      </div>
-      <div class="form-row">
-        <label for="fDownload">Download link * <span style="font-weight:400;color:var(--text-soft)">(buzzheavier link)</span></label>
-        <input id="fDownload" placeholder="https://buzzheavier.com/...">
-      </div>
-      <div class="form-row">
-        <label for="fDesc">Description (optional)</label>
-        <textarea id="fDesc" placeholder="Short description... e.g. 1080p, no watermark, 250 clips"></textarea>
-      </div>
-      <button class="btn" id="saveBtn">Publish pack</button>
-      <button class="btn btn-secondary" id="cancelEditBtn" hidden>Cancel edit</button>
-      <div class="status-msg" id="saveStatus"></div>
+    <!-- Tabs -->
+    <div class="admin-tabs">
+      <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
+      <button class="tab-btn" data-tab="packs">📦 Packs <span id="tabPackCount"></span></button>
+      <button class="tab-btn" data-tab="new">➕ New Pack</button>
+      <button class="tab-btn" data-tab="settings">⚙️ Settings</button>
     </div>
 
-    <div class="admin-card">
-      <h2>⚙️ Site settings</h2>
-      <div class="form-row">
-        <label for="fDiscord">Discord invite link</label>
-        <input id="fDiscord" placeholder="https://discord.gg/...">
+    <!-- ── DASHBOARD ── -->
+    <div class="tab-view active" id="tab-dashboard">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="num" id="dashPacks">0</div><div class="lbl">Published packs</div></div>
+        <div class="stat-card"><div class="num" id="dashHidden">0</div><div class="lbl">Hidden packs</div></div>
+        <div class="stat-card"><div class="num" id="dashDownloads">0</div><div class="lbl">Total downloads</div></div>
+        <div class="stat-card"><div class="num" id="dashCategories">0</div><div class="lbl">Categories</div></div>
       </div>
-      <button class="btn" id="saveConfigBtn">Save settings</button>
-      <div class="status-msg" id="configStatus"></div>
+      <div class="admin-card">
+        <h2>🏆 Top packs by downloads</h2>
+        <div class="top-list" id="topList"><p style="color:var(--text-soft)">No packs yet.</p></div>
+      </div>
+      <div class="admin-card">
+        <h2>🕒 Recently added</h2>
+        <div class="top-list" id="recentList"><p style="color:var(--text-soft)">No packs yet.</p></div>
+      </div>
     </div>
 
-    <div class="admin-card">
-      <h2>📦 Published packs (<span id="adminCount">0</span>)</h2>
-      <div id="adminList"></div>
+    <!-- ── PACKS ── -->
+    <div class="tab-view" id="tab-packs">
+      <div class="admin-card">
+        <h2>📦 Published packs (<span id="adminCount">0</span>)</h2>
+        <div class="list-tools">
+          <input id="listSearch" placeholder="Search packs..." autocomplete="off">
+          <select id="listCategory"><option value="">All categories</option></select>
+        </div>
+        <div id="adminList"></div>
+      </div>
+    </div>
+
+    <!-- ── NEW / EDIT PACK ── -->
+    <div class="tab-view" id="tab-new">
+      <div class="admin-card">
+        <h2 id="formHeading">➕ Post a new scenepack</h2>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="fTitle">Title *</label>
+            <input id="fTitle" placeholder="e.g. Breaking Bad S1 Scenepack">
+          </div>
+          <div class="form-row">
+            <label for="fCategory">Category *</label>
+            <input id="fCategory" list="catList" placeholder="Movies, TV Shows, Anime...">
+            <datalist id="catList">
+              <option value="Movies"><option value="TV Shows"><option value="Anime"><option value="Celebrities"><option value="Other">
+            </datalist>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="fImage">Photo URL * <span style="font-weight:400;color:var(--text-soft)">(picture of the show/movie)</span></label>
+          <input id="fImage" placeholder="https://... (paste image link)">
+          <img class="img-preview" id="imgPreview" alt="">
+        </div>
+        <div class="form-row">
+          <label for="fDownload">Download link * <span style="font-weight:400;color:var(--text-soft)">(buzzheavier link)</span></label>
+          <input id="fDownload" placeholder="https://buzzheavier.com/...">
+        </div>
+        <div class="form-row">
+          <label for="fDesc">Description (optional)</label>
+          <textarea id="fDesc" placeholder="Short description... e.g. 1080p, no watermark, 250 clips"></textarea>
+        </div>
+        <div class="switch-row">
+          <label class="switch">
+            <input type="checkbox" id="fHidden">
+            <span class="slider"></span>
+          </label>
+          <span class="switch-label">Hidden (draft — won't show on the site)</span>
+        </div>
+        <button class="btn" id="saveBtn">Publish pack</button>
+        <button class="btn btn-secondary" id="cancelEditBtn" hidden>Cancel edit</button>
+        <div class="status-msg" id="saveStatus"></div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="tab-view" id="tab-settings">
+      <div class="admin-card">
+        <h2>⚙️ Site settings</h2>
+        <div class="form-row">
+          <label for="fDiscord">Discord invite link</label>
+          <input id="fDiscord" placeholder="https://discord.gg/...">
+        </div>
+        <div class="switch-row">
+          <label class="switch">
+            <input type="checkbox" id="fAnnounceOn">
+            <span class="slider"></span>
+          </label>
+          <span class="switch-label">Show announcement banner on the site</span>
+        </div>
+        <div class="form-row">
+          <label for="fAnnounce">Announcement text</label>
+          <input id="fAnnounce" placeholder="e.g. 🎉 New Breaking Bad pack just dropped!" maxlength="180">
+        </div>
+        <button class="btn" id="saveConfigBtn">Save settings</button>
+        <div class="status-msg" id="configStatus"></div>
+      </div>
+
+      <div class="admin-card">
+        <h2>💾 Backup</h2>
+        <div class="backup-row">
+          <button class="btn btn-secondary" id="exportBtn">⬇️ Export packs (.json)</button>
+          <button class="btn btn-secondary" id="importBtn">⬆️ Import packs (.json)</button>
+          <input type="file" id="importFile" accept=".json,application/json" hidden>
+        </div>
+        <p class="muted">Export downloads a backup of all packs. Import replaces the whole list with the file's contents (asks to confirm first).</p>
+        <div class="status-msg" id="backupStatus"></div>
+      </div>
     </div>
   </div>
 
