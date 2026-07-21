@@ -133,8 +133,8 @@ export default {
       fresh.headers.set("Cache-Control", "no-store");
       return fresh;
     }
-    // Admin panel: never index, never cache
-    if (url.pathname.startsWith("/85h6juzkf")) {
+    // Admin panel + its script: never index, never cache
+    if (url.pathname.startsWith("/85h6juzkf") || url.pathname === "/admin.js") {
       const fresh = new Response(res.body, res);
       fresh.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
       fresh.headers.set("Cache-Control", "no-store");
