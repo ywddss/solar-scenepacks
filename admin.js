@@ -242,7 +242,36 @@
     else prev.style.display = "none";
   });
 
-  const EXTRA_FIELDS = ["show", "year", "genres", "clips", "quality", "encoding", "size"];
+  // ── Auto-detect size / quality / encoding from the download link ──
+  let metaTimer = null;
+  $("fDownload").addEventListener("input", () => {
+    clearTimeout(metaTimer);
+    const url = $("fDownload").value.trim();
+    if (!/^https:\/\//i.test(url)) return;
+    metaTimer = setTimeout(() => fetchMeta(url), 700); // wait until they stop typing
+  });
+
+  async function fetchMeta(url) {
+    const st = $("metaStatus");
+    st.textContent = "⏳ detecting…";
+    st.style.color = "var(--text-soft)";
+    try {
+      const res = await api("fetchMeta", { url });
+      const m = res.meta || {};
+      // Only fill fields the user hasn't typed in themselves
+      if (m.size && !$("fSize").value.trim()) $("fSize").value = m.size;
+      if (m.quality && !$("fQuality").value.trim()) $("fQuality").value = m.quality;
+      if (m.encoding && !$("fEncoding").value.trim()) $("fEncoding").value = m.encoding;
+      st.textContent = m.size ? "✅ detected" : "✅ done (size not found — type it if you know it)";
+      st.style.color = "#1a9c5b";
+    } catch (e) {
+      st.textContent = "⚠️ couldn't detect — fill in manually";
+      st.style.color = "#e0384a";
+    }
+    setTimeout(() => { st.textContent = ""; }, 6000);
+  }
+
+  const EXTRA_FIELDS = ["show", "year", "genres", "quality", "encoding", "size"];
   const extraInputId = f => "f" + f.charAt(0).toUpperCase() + f.slice(1);
 
   // ── Publish / edit ──

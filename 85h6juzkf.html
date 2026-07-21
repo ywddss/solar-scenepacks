@@ -146,6 +146,12 @@
 
     .backup-row { display: flex; gap: 10px; flex-wrap: wrap; }
     .muted { color: var(--text-soft); font-size: 0.84rem; margin-top: 10px; }
+    .auto-tag {
+      display: inline-block; padding: 1px 7px; border-radius: 6px;
+      background: var(--accent-soft); color: var(--accent);
+      font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;
+      vertical-align: 1px;
+    }
   </style>
 </head>
 <body>
@@ -261,35 +267,29 @@
             <input id="fYear" placeholder="e.g. 2008 or 2008–2013">
           </div>
         </div>
-        <div class="form-grid">
-          <div class="form-row">
-            <label for="fGenres">Genres <span style="font-weight:400;color:var(--text-soft)">(comma separated)</span></label>
-            <input id="fGenres" placeholder="e.g. Crime, Drama, Thriller">
-          </div>
-          <div class="form-row">
-            <label for="fClips">Number of clips</label>
-            <input id="fClips" placeholder="e.g. 250">
-          </div>
+        <div class="form-row">
+          <label for="fGenres">Genres <span style="font-weight:400;color:var(--text-soft)">(comma separated)</span></label>
+          <input id="fGenres" placeholder="e.g. Crime, Drama, Thriller">
         </div>
         <div class="form-grid">
           <div class="form-row">
-            <label for="fQuality">Quality</label>
-            <input id="fQuality" list="qualityList" placeholder="e.g. 1080p">
+            <label for="fQuality">Quality <span class="auto-tag">auto</span></label>
+            <input id="fQuality" list="qualityList" placeholder="auto-detected from link">
             <datalist id="qualityList">
               <option value="2160p"><option value="1440p"><option value="1080p"><option value="720p">
             </datalist>
           </div>
           <div class="form-row">
-            <label for="fEncoding">Encoding</label>
-            <input id="fEncoding" list="encodingList" placeholder="e.g. H.264">
+            <label for="fEncoding">Encoding <span class="auto-tag">auto</span></label>
+            <input id="fEncoding" list="encodingList" placeholder="auto-detected from link">
             <datalist id="encodingList">
               <option value="H.264"><option value="H.265"><option value="ProRes"><option value="AV1">
             </datalist>
           </div>
         </div>
         <div class="form-row">
-          <label for="fSize">File size</label>
-          <input id="fSize" placeholder="e.g. 4.2 GB">
+          <label for="fSize">File size <span class="auto-tag">auto</span> <span id="metaStatus" style="font-weight:600;font-size:0.8rem"></span></label>
+          <input id="fSize" placeholder="auto-detected from link">
         </div>
         <div class="switch-row">
           <label class="switch">

@@ -87,7 +87,6 @@
     if (p.genres) String(p.genres).split(",").map(s => s.trim()).filter(Boolean).forEach(g => badges.push(g));
     if (p.quality) badges.push(p.quality);
     if (p.encoding) badges.push(p.encoding);
-    if (p.clips) badges.push(p.clips + " clips");
     badges.forEach(b => {
       const span = document.createElement("span");
       span.className = "show-badge";

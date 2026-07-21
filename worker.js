@@ -12,6 +12,13 @@ function b64(str) {
   return btoa(unescape(encodeURIComponent(str)));
 }
 
+function fmtBytes(n) {
+  if (n >= 1e12) return (n / 1e12).toFixed(2) + " TB";
+  if (n >= 1e9) return (n / 1e9).toFixed(2) + " GB";
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + " MB";
+  return Math.round(n / 1e3) + " KB";
+}
+
 async function githubRequest(env, path, options = {}) {
   return fetch(`https://api.github.com${path}`, {
     ...options,
@@ -85,6 +92,52 @@ async function handleAdmin(request, env) {
       return json({ ok: true });
     }
 
+    // Auto-detect file metadata (size / quality / encoding) from a download link
+    if (action === "fetchMeta") {
+      const url = String(body.url || "");
+      if (!/^https:\/\/[^\s]+$/i.test(url)) {
+        return json({ error: "Invalid URL" }, 400);
+      }
+      const meta = { size: "", quality: "", encoding: "" };
+      try {
+        const res = await fetch(url, {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,*/*"
+          },
+          redirect: "follow",
+          signal: AbortSignal.timeout(10000)
+        });
+
+        // Direct file? Use Content-Length
+        const type = res.headers.get("content-type") || "";
+        const len = Number(res.headers.get("content-length") || 0);
+        if (!type.includes("text/html") && len > 0) {
+          meta.size = fmtBytes(len);
+        } else {
+          const html = (await res.text()).slice(0, 300000);
+          const text = html.replace(/<[^>]+>/g, " ");
+          // File size, e.g. "4.82 GB" / "512.3 MB"
+          const sizeMatch = text.match(/(\d{1,4}(?:[.,]\d{1,2})?)\s*(GB|MB|TB)\b/i);
+          if (sizeMatch) meta.size = sizeMatch[1].replace(",", ".") + " " + sizeMatch[2].toUpperCase();
+          // Quality, e.g. 2160p / 1080p / 4K
+          const qMatch = text.match(/\b(2160p|1440p|1080p|720p|480p)\b/i) || text.match(/\b(4k|uhd)\b/i);
+          if (qMatch) meta.quality = /4k|uhd/i.test(qMatch[1]) ? "2160p" : qMatch[1].toLowerCase();
+          // Encoding, e.g. H.265 / HEVC / x264 / AV1 / ProRes
+          const eMatch = text.match(/\b(h\.?265|hevc|x265)\b/i) ? "H.265"
+            : text.match(/\b(h\.?264|avc|x264)\b/i) ? "H.264"
+            : text.match(/\bav1\b/i) ? "AV1"
+            : text.match(/\bprores\b/i) ? "ProRes" : "";
+          if (eMatch) meta.encoding = eMatch;
+        }
+      } catch (e) {
+        return json({ error: "Could not reach that link" }, 502);
+      }
+      // Sensible default: high res packs are usually H.265, everything else H.264
+      if (!meta.encoding) meta.encoding = meta.quality === "2160p" ? "H.265" : "H.264";
+      return json({ ok: true, meta });
+    }
+
     if (action === "savePacks") {
       const packs = body.packs;
       if (!Array.isArray(packs)) {
@@ -103,7 +156,6 @@ async function handleAdmin(request, env) {
         show: String(p.show || "").slice(0, 200),
         year: String(p.year || "").slice(0, 20),
         genres: String(p.genres || "").slice(0, 200),
-        clips: String(p.clips || "").slice(0, 20),
         quality: String(p.quality || "").slice(0, 20),
         encoding: String(p.encoding || "").slice(0, 20),
         size: String(p.size || "").slice(0, 30)
