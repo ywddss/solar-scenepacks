@@ -531,3 +531,123 @@ img { display: block; max-width: 100%; }
   .stat:nth-child(2)::after { display: none; }
   .footer-inner { flex-direction: column; }
 }
+
+/* ─── Show page (scenepack detail) ─── */
+.show-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 72px 0 56px;
+  background: var(--bg);
+}
+.show-backdrop {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center 25%;
+  filter: blur(14px) saturate(1.15);
+  transform: scale(1.15);
+  opacity: 0.45;
+}
+.show-backdrop-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 60%, var(--bg) 100%),
+    radial-gradient(800px 500px at 25% 30%, rgba(0, 128, 254, 0.16), transparent 65%);
+}
+.show-hero-inner {
+  position: relative; z-index: 1;
+  display: flex; gap: 40px; align-items: flex-start;
+}
+.show-poster-col { flex-shrink: 0; }
+.show-poster {
+  width: 240px; aspect-ratio: 2 / 3; object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(0,128,254,0.12);
+  background: var(--bg-soft);
+}
+.show-main-col { flex: 1; min-width: 0; padding-top: 6px; }
+.show-back {
+  display: inline-block; margin-bottom: 14px;
+  color: var(--text-soft); font-weight: 600; font-size: 0.9rem;
+  transition: 0.18s;
+}
+.show-back:hover { color: var(--azure-light); }
+.show-title {
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  font-weight: 800; line-height: 1.12; letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+.show-year { color: var(--text-soft); font-weight: 600; font-size: 0.6em; }
+.show-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.show-badge {
+  padding: 5px 12px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem; font-weight: 700; color: var(--text);
+  backdrop-filter: blur(6px);
+}
+.show-plot {
+  color: var(--text-soft); max-width: 640px;
+  font-size: 0.98rem; line-height: 1.65; margin-bottom: 22px;
+}
+.show-stats { display: flex; gap: 34px; margin-bottom: 26px; }
+.show-stat { display: flex; flex-direction: column; }
+.show-stat-num { font-size: 1.6rem; font-weight: 800; color: #fff; }
+.show-stat-lbl { color: var(--text-soft); font-size: 0.82rem; font-weight: 600; }
+.show-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.show-dl-btn { font-size: 1rem; }
+
+.show-content { padding-top: 40px; }
+
+/* Packs table */
+.scp-table-wrap {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  overflow-x: auto;
+}
+.scp-table { width: 100%; border-collapse: collapse; min-width: 560px; }
+.scp-table th {
+  text-align: left; padding: 14px 18px;
+  font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--text-soft); border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.scp-table td {
+  padding: 13px 18px; border-bottom: 1px solid var(--border);
+  font-size: 0.92rem; vertical-align: middle;
+}
+.scp-table tbody tr:last-child td { border-bottom: none; }
+.scp-table tbody tr { transition: background 0.15s; }
+.scp-table tbody tr:hover { background: var(--card-hover); }
+.scp-table tbody tr.row-current { background: rgba(0, 128, 254, 0.07); }
+.scp-cell-title { display: flex; align-items: center; gap: 13px; }
+.scp-cell-title img {
+  width: 68px; height: 42px; object-fit: cover; border-radius: 7px;
+  background: var(--bg-soft); flex-shrink: 0;
+}
+.scp-name { font-weight: 700; }
+.scp-sub { color: var(--text-soft); font-size: 0.78rem; margin-top: 1px; }
+.scp-pill {
+  display: inline-flex; padding: 3px 10px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--azure-light);
+  font-size: 0.76rem; font-weight: 800;
+}
+.scp-pill-alt { background: rgba(255, 255, 255, 0.06); color: var(--text-soft); }
+.scp-dl-count {
+  color: var(--text-soft); font-weight: 700; white-space: nowrap;
+}
+.scp-dl-count svg { vertical-align: -1px; margin-right: 3px; }
+.btn-table-dl {
+  padding: 8px 16px; font-size: 0.84rem; white-space: nowrap;
+}
+
+.show-related { margin-top: 8px; }
+
+@media (max-width: 760px) {
+  .show-hero { padding: 44px 0 40px; }
+  .show-hero-inner { flex-direction: column; align-items: center; text-align: center; gap: 24px; }
+  .show-poster { width: 180px; }
+  .show-meta, .show-actions, .show-stats { justify-content: center; }
+  .show-plot { margin-left: auto; margin-right: auto; }
+  .col-opt { display: none; }
+  .scp-table { min-width: 0; }
+}

@@ -99,7 +99,14 @@ async function handleAdmin(request, env) {
         image: String(p.image || "").slice(0, 1000),
         download: String(p.download || "").slice(0, 1000),
         date: String(p.date || "").slice(0, 10),
-        hidden: !!p.hidden
+        hidden: !!p.hidden,
+        show: String(p.show || "").slice(0, 200),
+        year: String(p.year || "").slice(0, 20),
+        genres: String(p.genres || "").slice(0, 200),
+        clips: String(p.clips || "").slice(0, 20),
+        quality: String(p.quality || "").slice(0, 20),
+        encoding: String(p.encoding || "").slice(0, 20),
+        size: String(p.size || "").slice(0, 30)
       }));
       await saveFile(env, ALLOWED_FILES.packs, clean, "Update packs via admin panel");
       return json({ ok: true });

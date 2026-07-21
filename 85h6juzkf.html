@@ -250,6 +250,47 @@
           <label for="fDesc">Description (optional)</label>
           <textarea id="fDesc" placeholder="Short description... e.g. 1080p, no watermark, 250 clips"></textarea>
         </div>
+        <h2 style="margin-top:22px">🎬 Show page details <span style="font-weight:400;font-size:0.8rem;color:var(--text-soft)">(all optional — makes the pack's page look pro)</span></h2>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="fShow">Show / movie name <span style="font-weight:400;color:var(--text-soft)">(groups packs of the same show)</span></label>
+            <input id="fShow" placeholder="e.g. Breaking Bad">
+          </div>
+          <div class="form-row">
+            <label for="fYear">Year</label>
+            <input id="fYear" placeholder="e.g. 2008 or 2008–2013">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="fGenres">Genres <span style="font-weight:400;color:var(--text-soft)">(comma separated)</span></label>
+            <input id="fGenres" placeholder="e.g. Crime, Drama, Thriller">
+          </div>
+          <div class="form-row">
+            <label for="fClips">Number of clips</label>
+            <input id="fClips" placeholder="e.g. 250">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="fQuality">Quality</label>
+            <input id="fQuality" list="qualityList" placeholder="e.g. 1080p">
+            <datalist id="qualityList">
+              <option value="2160p"><option value="1440p"><option value="1080p"><option value="720p">
+            </datalist>
+          </div>
+          <div class="form-row">
+            <label for="fEncoding">Encoding</label>
+            <input id="fEncoding" list="encodingList" placeholder="e.g. H.264">
+            <datalist id="encodingList">
+              <option value="H.264"><option value="H.265"><option value="ProRes"><option value="AV1">
+            </datalist>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="fSize">File size</label>
+          <input id="fSize" placeholder="e.g. 4.2 GB">
+        </div>
         <div class="switch-row">
           <label class="switch">
             <input type="checkbox" id="fHidden">

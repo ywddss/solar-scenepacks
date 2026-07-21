@@ -214,7 +214,7 @@
       list.appendChild(row);
     });
     list.querySelectorAll("[data-view]").forEach(b =>
-      b.addEventListener("click", () => window.open("index.html?pack=" + encodeURIComponent(b.dataset.view), "_blank")));
+      b.addEventListener("click", () => window.open("show.html?pack=" + encodeURIComponent(b.dataset.view), "_blank")));
     list.querySelectorAll("[data-hide]").forEach(b =>
       b.addEventListener("click", () => toggleHide(b.dataset.hide)));
     list.querySelectorAll("[data-dupe]").forEach(b =>
@@ -242,6 +242,9 @@
     else prev.style.display = "none";
   });
 
+  const EXTRA_FIELDS = ["show", "year", "genres", "clips", "quality", "encoding", "size"];
+  const extraInputId = f => "f" + f.charAt(0).toUpperCase() + f.slice(1);
+
   // ── Publish / edit ──
   function startEdit(id) {
     const pack = packs.find(p => p.id === id);
@@ -256,6 +259,7 @@
     $("fImage").dispatchEvent(new Event("input"));
     $("fDownload").value = pack.download || "";
     $("fDesc").value = pack.description || "";
+    EXTRA_FIELDS.forEach(f => { $(extraInputId(f)).value = pack[f] || ""; });
     $("fHidden").checked = !!pack.hidden;
     switchTab("new");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -267,6 +271,7 @@
     $("saveBtn").textContent = "Publish pack";
     $("cancelEditBtn").hidden = true;
     ["fTitle", "fCategory", "fImage", "fDownload", "fDesc"].forEach(id => $(id).value = "");
+    EXTRA_FIELDS.forEach(f => { $(extraInputId(f)).value = ""; });
     $("fHidden").checked = false;
     $("imgPreview").style.display = "none";
   }
@@ -293,6 +298,7 @@
         ? (packs.find(p => p.id === editingId) || {}).date || todayISO()
         : todayISO()
     };
+    EXTRA_FIELDS.forEach(f => { pack[f] = $(extraInputId(f)).value.trim(); });
 
     if (editingId) {
       const i = packs.findIndex(p => p.id === editingId);

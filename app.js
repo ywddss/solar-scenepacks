@@ -155,7 +155,9 @@
             </span>
           </div>
         </div>`;
-      card.addEventListener("click", () => openModal(pack));
+      card.addEventListener("click", () => {
+        location.href = "show.html?pack=" + encodeURIComponent(pack.id);
+      });
       grid.appendChild(card);
     });
   }
@@ -326,11 +328,11 @@
     renderFilters();
     renderGrid();
     updateStats();
-    // Deep link: open ?pack=<id> directly (shared links)
+    // Deep link: old ?pack=<id> links redirect to the pack's show page
     const packParam = new URLSearchParams(location.search).get("pack");
-    if (packParam) {
-      const shared = packs.find(x => String(x.id) === packParam);
-      if (shared) openModal(shared, false);
+    if (packParam && packs.some(x => String(x.id) === packParam)) {
+      location.replace("show.html?pack=" + encodeURIComponent(packParam));
+      return;
     }
     // Fetch download counts, then re-render so numbers appear
     loadDownloadCounts().then(() => { renderGrid(); updateStats(); });
