@@ -7,6 +7,28 @@
   let sortMode = "newest"; // "newest" | "popular"
   let downloads = {}; // packId -> count
   let currentPack = null;
+  let showFavsOnly = false;
+  let shownCount = 0;          // how many cards are currently rendered (pagination)
+  const PAGE_SIZE = 12;        // cards per "Load more" batch
+
+  // ── Favorites (saved in the visitor's browser, no login) ──
+  const FAVS_KEY = "solar-favs";
+  let favs = new Set();
+  try { favs = new Set(JSON.parse(localStorage.getItem(FAVS_KEY) || "[]")); } catch (e) {}
+  function isFav(id) { return favs.has(String(id)); }
+  function toggleFav(id) {
+    id = String(id);
+    if (favs.has(id)) favs.delete(id); else favs.add(id);
+    try { localStorage.setItem(FAVS_KEY, JSON.stringify([...favs])); } catch (e) {}
+  }
+
+  // A pack counts as "new" if dated within the last 7 days
+  function isNew(pack) {
+    if (!pack.date) return false;
+    const d = new Date(pack.date);
+    if (isNaN(d)) return false;
+    return (Date.now() - d.getTime()) < 7 * 24 * 60 * 60 * 1000;
+  }
 
   // Free counter service — counts persist online, shared for all visitors
   const COUNTER_NS = "solar-scenepacks";
@@ -95,20 +117,37 @@
     filtersEl.innerHTML = "";
     categories().forEach(cat => {
       const btn = document.createElement("button");
-      btn.className = "filter-btn" + (cat === activeCategory ? " active" : "");
+      btn.className = "filter-btn" + (!showFavsOnly && cat === activeCategory ? " active" : "");
       btn.textContent = cat;
       btn.addEventListener("click", () => {
         activeCategory = cat;
+        showFavsOnly = false;
+        shownCount = 0;
         renderFilters();
         renderGrid();
       });
       filtersEl.appendChild(btn);
     });
+
+    // ❤ Favorites chip — only appears once the visitor has saved something
+    if (favs.size) {
+      const favBtn = document.createElement("button");
+      favBtn.className = "filter-btn filter-fav" + (showFavsOnly ? " active" : "");
+      favBtn.innerHTML = '<span class="fav-heart">♥</span> Favorites <span class="fav-chip-count">' + favs.size + "</span>";
+      favBtn.addEventListener("click", () => {
+        showFavsOnly = !showFavsOnly;
+        shownCount = 0;
+        renderFilters();
+        renderGrid();
+      });
+      filtersEl.appendChild(favBtn);
+    }
   }
 
   function visiblePacks() {
     const list = packs.filter(p => {
-      const matchCat = activeCategory === "All" || p.category === activeCategory;
+      if (showFavsOnly && !isFav(p.id)) return false;
+      const matchCat = showFavsOnly || activeCategory === "All" || p.category === activeCategory;
       const q = searchTerm.trim().toLowerCase();
       const matchSearch =
         !q ||
@@ -127,21 +166,29 @@
 
   function renderGrid() {
     const list = visiblePacks();
+    if (shownCount <= 0) shownCount = PAGE_SIZE;
+    const visible = list.slice(0, shownCount);
+
     grid.innerHTML = "";
     emptyState.hidden = list.length > 0;
     packCount.textContent = list.length + (list.length === 1 ? " scenepack" : " scenepacks");
-    gridTitle.textContent =
-      sortMode === "popular"
+    gridTitle.textContent = showFavsOnly
+      ? "Your Favorites"
+      : sortMode === "popular"
         ? (activeCategory === "All" ? "Most Popular Scenepacks" : "Popular " + activeCategory + " Scenepacks")
         : (activeCategory === "All" ? "Latest Scenepacks" : activeCategory + " Scenepacks");
 
-    list.forEach((pack, i) => {
+    visible.forEach((pack, i) => {
       const card = document.createElement("div");
       card.className = "pack-card";
       card.style.animationDelay = Math.min(i * 40, 400) + "ms";
       const dl = downloads[pack.id] || 0;
       card.innerHTML = `
         <div class="thumb-wrap">
+        ${isNew(pack) ? '<span class="badge-new">NEW</span>' : ""}
+        <button class="fav-btn${isFav(pack.id) ? " faved" : ""}" type="button" aria-label="Save to favorites" title="Save to favorites">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </button>
         <img class="pack-thumb" src="${escapeHtml(pack.image || "")}" alt="${escapeHtml(pack.title)}" loading="lazy"
              onerror="this.src='data:image/svg+xml,${encodeURIComponent('<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 160 100\"><rect width=\"160\" height=\"100\" fill=\"%230b0d12\"/><text x=\"80\" y=\"55\" font-size=\"30\" text-anchor=\"middle\">🎬</text></svg>')}'">
         </div>
@@ -155,11 +202,44 @@
             </span>
           </div>
         </div>`;
+      // Heart toggles favorite without opening the pack
+      const favBtn = card.querySelector(".fav-btn");
+      favBtn.addEventListener("click", e => {
+        e.stopPropagation();
+        toggleFav(pack.id);
+        favBtn.classList.toggle("faved", isFav(pack.id));
+        renderFilters();
+        // If we're in the favorites view and just un-favorited, drop the card
+        if (showFavsOnly && !isFav(pack.id)) renderGrid();
+      });
       card.addEventListener("click", () => {
         location.href = "show.html?pack=" + encodeURIComponent(pack.id);
       });
       grid.appendChild(card);
     });
+
+    renderLoadMore(list.length);
+  }
+
+  // "Load more" button — reveals the next batch of cards
+  function renderLoadMore(total) {
+    let btn = document.getElementById("loadMoreBtn");
+    if (shownCount < total) {
+      if (!btn) {
+        btn = document.createElement("button");
+        btn.id = "loadMoreBtn";
+        btn.className = "load-more";
+        btn.addEventListener("click", () => {
+          shownCount += PAGE_SIZE;
+          renderGrid();
+        });
+        grid.parentNode.insertBefore(btn, grid.nextSibling);
+      }
+      btn.textContent = "Load more (" + (total - shownCount) + " more)";
+      btn.hidden = false;
+    } else if (btn) {
+      btn.hidden = true;
+    }
   }
 
   function openModal(pack, updateUrl = true) {
@@ -242,6 +322,7 @@
   document.querySelectorAll(".sort-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       sortMode = btn.dataset.sort;
+      shownCount = 0;
       document.querySelectorAll(".sort-btn").forEach(b =>
         b.classList.toggle("active", b === btn)
       );
@@ -251,6 +332,7 @@
 
   searchInput.addEventListener("input", e => {
     searchTerm = e.target.value;
+    shownCount = 0;
     renderGrid();
   });
 

@@ -34,6 +34,24 @@
     return "dl-" + String(pack.id || pack.title || "").replace(/[^a-zA-Z0-9_-]/g, "_").slice(0, 60);
   }
 
+  // ── Favorites (shared with the home page via localStorage) ──
+  const FAVS_KEY = "solar-favs";
+  let favs = new Set();
+  try { favs = new Set(JSON.parse(localStorage.getItem(FAVS_KEY) || "[]")); } catch (e) {}
+  function isFav(id) { return favs.has(String(id)); }
+  function toggleFav(id) {
+    id = String(id);
+    if (favs.has(id)) favs.delete(id); else favs.add(id);
+    try { localStorage.setItem(FAVS_KEY, JSON.stringify([...favs])); } catch (e) {}
+  }
+
+  function isNew(pack) {
+    if (!pack.date) return false;
+    const d = new Date(pack.date);
+    if (isNaN(d)) return false;
+    return (Date.now() - d.getTime()) < 7 * 24 * 60 * 60 * 1000;
+  }
+
   function loadDownloadCounts(list) {
     return Promise.all(list.map(pack =>
       fetch(COUNTER_API + "/" + counterKey(pack) + "/")
@@ -159,6 +177,10 @@
       card.href = "show.html?pack=" + encodeURIComponent(p.id);
       card.innerHTML = `
         <div class="thumb-wrap">
+          ${isNew(p) ? '<span class="badge-new">NEW</span>' : ""}
+          <button class="fav-btn${isFav(p.id) ? " faved" : ""}" type="button" aria-label="Save to favorites" title="Save to favorites">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+          </button>
           <img class="pack-thumb" src="${esc(p.image || "")}" alt="${esc(p.title)}" loading="lazy">
         </div>
         <div class="pack-info">
@@ -171,7 +193,30 @@
             </span>
           </div>
         </div>`;
+      const favBtn = card.querySelector(".fav-btn");
+      favBtn.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleFav(p.id);
+        favBtn.classList.toggle("faved", isFav(p.id));
+      });
       grid.appendChild(card);
+    });
+  }
+
+  // Favorite button (hero)
+  const favBtn = $("showFav"), favText = $("showFavText");
+  function syncHeroFav() {
+    if (!favBtn || !current) return;
+    const on = isFav(current.id);
+    favBtn.classList.toggle("faved", on);
+    if (favText) favText.textContent = on ? "Favorited" : "Favorite";
+  }
+  if (favBtn) {
+    favBtn.addEventListener("click", () => {
+      if (!current) return;
+      toggleFav(current.id);
+      syncHeroFav();
     });
   }
 
@@ -211,6 +256,7 @@
     }
     group = packs.filter(p => groupName(p) === groupName(current));
     renderHero();
+    syncHeroFav();
     renderStats();
     renderTable();
     renderRelated();
