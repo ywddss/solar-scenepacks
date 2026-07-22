@@ -184,11 +184,59 @@ async function handleAdmin(request, env) {
   }
 }
 
+const SITE_ORIGIN = "https://solarscenepacks.xyz";
+
+function xmlEscape(str) {
+  return String(str)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+}
+
+// Build sitemap.xml on the fly: static pages + one entry per (non-hidden) pack.
+async function handleSitemap(request, env) {
+  let packs = [];
+  try {
+    const res = await env.ASSETS.fetch(new URL("/packs.json", request.url).toString());
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) packs = data.filter(p => p && p.id && !p.hidden);
+    }
+  } catch { /* fall back to just the static pages */ }
+
+  const staticPages = [
+    { loc: "/", changefreq: "daily", priority: "1.0" },
+    { loc: "/dmca.html", changefreq: "yearly", priority: "0.2" },
+    { loc: "/terms.html", changefreq: "yearly", priority: "0.2" }
+  ];
+
+  const urls = staticPages.map(p =>
+    `  <url>\n    <loc>${SITE_ORIGIN}${p.loc}</loc>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>`
+  );
+
+  packs.forEach(p => {
+    const loc = `${SITE_ORIGIN}/show.html?pack=${encodeURIComponent(p.id)}`;
+    const lastmod = /^\d{4}-\d{2}-\d{2}$/.test(p.date || "") ? `\n    <lastmod>${p.date}</lastmod>` : "";
+    urls.push(`  <url>\n    <loc>${xmlEscape(loc)}</loc>${lastmod}\n    <changefreq>weekly</changefreq>\n    <priority>0.8</priority>\n  </url>`);
+  });
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join("\n")}\n</urlset>\n`;
+
+  return new Response(xml, {
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600"
+    }
+  });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (url.pathname === "/api/admin") {
       return handleAdmin(request, env);
+    }
+    if (url.pathname === "/sitemap.xml") {
+      return handleSitemap(request, env);
     }
     // Everything else: static files, packs/config json never cached
     const res = await env.ASSETS.fetch(request);
