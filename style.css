@@ -90,7 +90,49 @@ img { display: block; max-width: 100%; }
   box-shadow: 0 4px 18px rgba(0, 128, 254, 0.4);
 }
 .discord-btn:hover { background: var(--azure-light); }
+/* Discord login button — outlined variant of the discord button */
+.login-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.04); color: #fff !important;
+  border: 1px solid rgba(255,255,255,0.14);
+}
+.login-btn:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.24); }
+/* Logged-in account chip */
+.account-box {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 6px 5px 8px; border-radius: 999px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+}
+.account-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; background: #0b0d12; }
+.account-name {
+  font-weight: 600; font-size: 0.9rem; color: #fff;
+  max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.account-logout {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-soft); font-weight: 600; font-size: 0.82rem;
+  padding: 4px 10px; border-radius: 999px; transition: 0.18s;
+}
+.account-logout:hover { color: #fff; background: rgba(255,255,255,0.08); }
 .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; color: #fff; cursor: pointer; }
+
+/* ─── Toast (login feedback / download gate) ─── */
+.solar-toast {
+  position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px);
+  max-width: min(92vw, 460px);
+  background: #0e1118; color: #eaf1fb;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px; padding: 13px 18px;
+  font-size: 0.92rem; font-weight: 500; line-height: 1.4;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+  opacity: 0; pointer-events: none; z-index: 4000;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.solar-toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.solar-toast a { color: var(--azure-light); font-weight: 700; text-decoration: underline; }
+.solar-toast.toast-ok { border-color: rgba(48, 209, 88, 0.5); }
+.solar-toast.toast-warn { border-color: rgba(255, 179, 64, 0.55); }
+.solar-toast.toast-err { border-color: rgba(255, 92, 92, 0.55); }
 
 /* ─── Hero — glow orbs on black ─── */
 .hero {

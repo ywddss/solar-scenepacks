@@ -250,7 +250,7 @@
     modalCategory.textContent = pack.category || "Pack";
     modalDate.textContent = fmtDate(pack.date);
     modalDesc.textContent = pack.description || "";
-    modalDownload.href = pack.download || "#";
+    modalDownload.href = "/api/download?pack=" + encodeURIComponent(pack.id);
     updateModalCount(pack);
     resetShareBtn();
     overlay.hidden = false;
@@ -278,8 +278,9 @@
   overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
   document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
 
-  modalDownload.addEventListener("click", () => {
-    if (currentPack) trackDownload(currentPack);
+  modalDownload.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (currentPack) window.SolarAuth.gateDownload(currentPack.id, () => trackDownload(currentPack));
   });
 
   // Share button — copies a direct link to this pack
@@ -343,6 +344,7 @@
   }
 
   function applyConfig() {
+    window.__solarDiscordInvite = config.discord || "";
     const links = [
       document.getElementById("discordLink"),
       document.getElementById("discordLinkFooter"),

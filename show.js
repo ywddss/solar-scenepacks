@@ -74,6 +74,7 @@
   }
 
   function applyConfig() {
+    window.__solarDiscordInvite = config.discord || "";
     ["discordLink", "discordLinkFooter", "requestLink"].forEach(id => {
       const a = $(id);
       if (a) a.href = config.discord || "#";
@@ -113,10 +114,14 @@
     });
 
     $("showPlot").textContent = p.description || "";
-    $("heroDownload").href = p.download || "#";
-    $("heroDownload").target = "_blank";
-    $("heroDownload").rel = "noopener";
-    $("heroDownload").addEventListener("click", () => trackDownload(p));
+    const hero = $("heroDownload");
+    hero.href = "/api/download?pack=" + encodeURIComponent(p.id);
+    hero.removeAttribute("target");
+    hero.removeAttribute("rel");
+    hero.addEventListener("click", (e) => {
+      e.preventDefault();
+      window.SolarAuth.gateDownload(p.id, () => trackDownload(p));
+    });
   }
 
   function renderStats() {
@@ -151,7 +156,7 @@
           ${fmtCount(downloads[p.id] || 0)}
         </td>
         <td>
-          <a class="btn-download btn-table-dl" href="${esc(p.download || "#")}" target="_blank" rel="noopener" data-dl="${esc(p.id)}">
+          <a class="btn-download btn-table-dl" href="/api/download?pack=${encodeURIComponent(p.id)}" data-dl="${esc(p.id)}">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download
           </a>
@@ -159,9 +164,10 @@
       rows.appendChild(tr);
     });
     rows.querySelectorAll("[data-dl]").forEach(a =>
-      a.addEventListener("click", () => {
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
         const p = packs.find(x => x.id === a.dataset.dl);
-        if (p) trackDownload(p);
+        if (p) window.SolarAuth.gateDownload(p.id, () => trackDownload(p));
       }));
   }
 
